@@ -55,5 +55,11 @@ The analysis follows these main steps:
 1. Clone the repository
 2. Install dependencies:
    ```bash
+
    pip install pandas matplotlib
+
+## Project context
+
+This project was developed as part of a career transition into data analytics, focusing on reproducible workflows and practical data handling rather than advanced modeling.
+
 
