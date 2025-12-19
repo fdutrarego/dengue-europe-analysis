@@ -38,3 +38,4 @@ plt.title("Dengue over time in European countries (top 10 by average incidence)"
 plt.legend()
 plt.grid(True)
 plt.show()
+plt.savefig("dengue_trends.png", dpi=300, bbox_inches="tight")
