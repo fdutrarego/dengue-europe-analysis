@@ -33,9 +33,10 @@ for country in series['regionname'].unique():
     plt.plot(d['time'], d['numvalue'], marker='o', label=country)
 
 plt.xlabel("Year")
-plt.ylabel("Dengue cases per 100,000 inhabitants")  # ajuste se numvalue for casos absolutos
+plt.ylabel("Dengue cases per 100,000 inhabitants")
 plt.title("Dengue over time in European countries (top 10 by average incidence)")
 plt.legend()
 plt.grid(True)
 plt.show()
 plt.savefig("dengue_trends.png", dpi=300, bbox_inches="tight")
+
