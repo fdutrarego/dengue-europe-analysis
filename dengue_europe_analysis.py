@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 
 #Load
 dengue = pd.read_csv('dengue.csv')
+print(dengue.columns.tolist())
 
 #Standardize column names
 dengue.columns = (dengue.columns.str.strip().str.lower().str.replace(' ', '_'))
@@ -18,25 +19,31 @@ dengue = dengue.dropna(subset= ['unit', 'time', 'regioncode', 'regionname', 'num
 regions_to_remove = ["EU/EEA (with UK until 2019)", "EU (with UK until 2019)", "EU/EEA (without UK)", "EU (without UK)"]
 dengue = dengue[~dengue['regionname'].isin(regions_to_remove)]
 
-# Top 10 countries by average incidence (numvalue)
-top_regions = dengue.groupby('regionname')['numvalue'].mean().sort_values(ascending = False).head(10)
-dengue_highest = dengue[dengue['regionname'].isin(top_regions.index)]
+#Units to remove
+dengue_10k = dengue[dengue['unit'] == "N/100000"]
+print(dengue_10k.head())
 
-# Aggregate (country, year) in case multiple entries exist per year
-series = (dengue_highest.groupby(['regionname', 'time'])['numvalue'].mean().reset_index().sort_values(['regionname', 'time']))
+#Select notification rate
+notif_rate = dengue_10k[dengue_10k['indicator'] == 'Notification rate']
+print(notif_rate.head())
+
+#Top 10 countries per year
+notif_rate_sorted = notif_rate.sort_values(by=['time', 'numvalue'], ascending=[True, False])
+top10_each_year = notif_rate_sorted.groupby('time').head(10).reset_index(drop=True)
+top_countries = (top10_each_year['regionname'].value_counts().head(5).index)
+dengue_highest = top10_each_year[top10_each_year['regionname'].isin(top_countries)]
 
 #plot
 plt.figure(figsize=(10, 6))
 
-for country in series['regionname'].unique():
-    d = series[series['regionname'] == country]
+for country in dengue_highest['regionname'].unique():
+    d = dengue_highest[dengue_highest['regionname'] == country]
     plt.plot(d['time'], d['numvalue'], marker='o', label=country)
 
 plt.xlabel("Year")
 plt.ylabel("Dengue cases per 100,000 inhabitants")
-plt.title("Dengue over time in European countries (top 10 by average incidence)")
-plt.legend()
+plt.title("Autochthonous dengue incidence over time in selected European countries")
+plt.legend(title="Country")
 plt.grid(True)
 plt.show()
-plt.savefig("dengue_trends.png", dpi=300, bbox_inches="tight")
 
